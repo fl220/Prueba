@@ -4,6 +4,11 @@ El módulo permite obtener interfaces, dispositivos conocidos por la tabla ARP y
 realizar escaneos básicos mediante ping. Además de la interfaz de línea de
 comandos original, ahora incluye una ventana con estética "liquid glass" inspirada
 en iOS 16.
+"""Herramienta de línea de comandos para inspeccionar dispositivos en la red local.
+
+Este módulo detecta interfaces, pasarelas y dispositivos descubiertos a través de la
+tabla ARP. También ofrece la posibilidad de realizar un escaneo básico mediante ping
+para intentar descubrir dispositivos que aún no aparecen en la tabla ARP.
 """
 from __future__ import annotations
 
@@ -35,6 +40,12 @@ from tkinter import messagebox, ttk
 # ---------------------------------------------------------------------------
 # Modelo de datos
 # ---------------------------------------------------------------------------
+
+import subprocess
+import sys
+import textwrap
+from itertools import islice
+from typing import Dict, Iterable, List, Optional
 
 
 @dataclasses.dataclass
@@ -143,6 +154,7 @@ class NetworkScanner:
         return []
 
     def _get_interfaces_from_ip(self) -> List[NetworkInterface]:
+    def _get_interfaces_unix(self) -> List[NetworkInterface]:
         output = self._execute(["ip", "-o", "-4", "addr", "show"])
         interfaces: List[NetworkInterface] = []
         for line in output.splitlines():
@@ -329,6 +341,7 @@ class NetworkScanner:
         return []
 
     def _parse_ip_neigh(self, output: str) -> List[NetworkDevice]:
+        output = self._execute(["ip", "neigh", "show"])
         devices: List[NetworkDevice] = []
         for line in output.splitlines():
             parts = line.split()
@@ -994,25 +1007,6 @@ def run_cli(args: argparse.Namespace) -> int:
         print(f"Hosts en línea ({len(online)}): {', '.join(online) if online else 'ninguno'}")
         print(f"Hosts sin respuesta ({len(offline)}): {', '.join(offline) if offline else 'ninguno'}")
 
-    return 0
-
-
-def launch_gui(args: argparse.Namespace) -> None:
-    app = NetworkMonitorApp(
-        max_hosts=args.max_hosts,
-        ping_count=args.count,
-        timeout_ms=args.timeout,
-        auto_scan=args.scan,
-    )
-    app.run()
-
-
-def main(argv: Optional[List[str]] = None) -> int:
-    args = parse_args(argv)
-    if args.cli:
-        return run_cli(args)
-
-    launch_gui(args)
     return 0
 
 
