@@ -1,10 +1,10 @@
 # Monitor de red doméstica
 
-Este repositorio contiene una utilidad en Python para
-obtener una visión rápida del estado de la red local. Además del modo de línea de
-comandos original, ahora incluye una interfaz gráfica con estética "liquid glass" que
-permite explorar las interfaces detectadas, los dispositivos registrados en la tabla
-ARP y lanzar escaneos básicos mediante ping.
+Este repositorio contiene una utilidad de línea de comandos escrita en Python para
+obtener una visión rápida del estado de la red local. La herramienta muestra las
+interfaces de red IPv4 detectadas, la tabla ARP del sistema y ofrece un escaneo
+opcional mediante ping para intentar descubrir dispositivos que todavía no aparecen en
+la tabla.
 
 ## Requisitos
 
@@ -21,25 +21,16 @@ Ejecute el script desde la raíz del proyecto:
 python network_monitor.py
 ```
 
-La ventana muestra tres paneles principales:
-
-* **Interfaces de red**: lista cada interfaz IPv4 y su red asociada.
-* **Dispositivos conocidos (ARP)**: refleja la tabla ARP del sistema.
-* **Escaneo de red**: al pulsar "Escanear" se lanza un ping contra los primeros hosts
-  del segmento y se listan los resultados en estilo "vidrio líquido".
-
-### Uso en CLI
-
-Si prefieres el modo clásico de consola, actívalo con `--cli`:
+Para realizar un escaneo rápido (máximo 32 hosts por defecto):
 
 ```bash
-python network_monitor.py --cli
+python network_monitor.py --scan
 ```
 
-Parámetros disponibles (CLI y GUI):
+Opciones disponibles:
 
-* `--scan`: en CLI ejecuta el escaneo inmediatamente; en GUI lanza un escaneo automático al abrir.
-* `--interface`: especifica la interfaz sobre la que realizar el escaneo (solo CLI).
+* `--scan`: activa el escaneo mediante ping.
+* `--interface`: especifica la interfaz sobre la que realizar el escaneo.
 * `--max-hosts`: limita el número de direcciones que se consultan (32 por defecto).
 * `--timeout`: tiempo de espera de cada ping en milisegundos.
 * `--count`: número de solicitudes de ping por host.
